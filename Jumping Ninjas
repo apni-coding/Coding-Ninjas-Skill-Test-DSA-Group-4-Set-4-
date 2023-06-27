@@ -1,0 +1,68 @@
+/*
+Jumping Ninja
+Given the heights of N valleys arranged in consecutive manner and an integer M. In one step, Ninja can jump from valley i to valley
+1. i + j where, i + j < number of valleys and 0 < j <= M
+2. i - j where, i - j >= 0 and 0 < j <= M
+Also, you are allowed to jump from valley i to valley j if height[i] > height[j] and height[i] > height[k] for valleys k between valley i and valley j. Ninja can start from any valley and start jumping. Determine the maximum number of valleys he can visit.
+Note: Ninja is not allowed to jump to the right of Nth valley and left of 1st valley. (Stay within boundaries).
+Input Format:
+First line contains an integer t, representing number of test cases
+Second line contains two space separated integers N and M.
+Third line contains N space separated integers denoting the heights of N valleys.
+Constraints:
+1 <= N <= 10^4
+1 <= Height[i] <= 10^5
+1 <= M <= N
+Time Limit: 1.5 seconds
+Output Format:
+Determine the maximum number of valleys Ninja can visit.
+Sample Input 1:
+1
+11 2
+6 4 14 6 8 13 9 7 10 6 12
+Sample Output 1:
+4
+Explanation 1:
+You can start at valley 11 with height 12. You can jump from valley 11 --> 9 --> 7 --> 8.
+*/
+
+import java.util.*;
+
+public class Solution {
+    static int maxValleys = 0;
+    static int[] dp;
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int t = sc.nextInt();
+        while (t-- > 0) {
+            int n = sc.nextInt();
+            int m = sc.nextInt();
+            int[] h = new int[n];
+            for (int i = 0; i < n; i++) {
+                h[i] = sc.nextInt();
+            }
+            maxValleys = 0;
+            dp = new int[n];
+            Arrays.fill(dp, -1);
+            for (int i = 0; i < n; i++) {
+                maxValleys = Math.max(maxValleys, dfs(i, h, m));
+            }
+            System.out.println(maxValleys);
+        }
+    }
+
+    static int dfs(int i, int[] h, int m) {
+        if (dp[i] != -1) {
+            return dp[i];
+        }
+        int maxValleysFromI = 0;
+        for (int j = 1; j <= m && i + j < h.length && h[i + j] < h[i]; j++) {
+            maxValleysFromI = Math.max(maxValleysFromI, dfs(i + j, h, m));
+        }
+        for (int j = 1; j <= m && i - j >= 0 && h[i - j] < h[i]; j++) {
+            maxValleysFromI = Math.max(maxValleysFromI, dfs(i - j, h, m));
+        }
+        return dp[i] = maxValleysFromI + 1;
+    }
+}
